@@ -1,0 +1,42 @@
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ==========================
+# Logs
+# ==========================
+*.log
+
+# ==========================
+# IDE / Editor
+# ==========================
+.vscode/
+.idea/
+
+# ==========================
+# Docker
+# ==========================
+*.tar
+
+# ==========================
+# AWS CLI / Infra
+# ==========================
+.aws/
+*.json
+!infra/task-def.json    # mantém seu task definition
+!infra/*.tf             # caso futuramente tenha terraform
+
+# ==========================
+# Node (se usar no frontend futuramente)
+# ==========================
+node_modules/
+npm-debug.log
