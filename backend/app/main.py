@@ -1,15 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from typing import List
-
-app = FastAPI(
-    title="Educational Assistant API",
-    version="1.0.0",
-    description="Assistente educacional em arquitetura cloud moderna."
-)
-
-# ---- Schemas ----
+app = FastAPI()
 
 class QuestionRequest(BaseModel):
     student_id: str
@@ -22,16 +14,14 @@ class AnswerResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
+    version: str
 
 # ---- Rotas ----
 
 @app.get("/health", response_model=HealthResponse)
-def health_check():
-    return HealthResponse(status="ok")
-
-@app.get("/health")
 def health():
-    return {"status": "ok", "version": "2"}
+    return HealthResponse(status="ok", version="2")
+
 
 
 @app.post("/ask", response_model=AnswerResponse)
