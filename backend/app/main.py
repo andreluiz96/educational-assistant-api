@@ -29,6 +29,10 @@ class HealthResponse(BaseModel):
 def health_check():
     return HealthResponse(status="ok")
 
+@app.get("/health")
+def health():
+    return {"status": "ok", "version": "2"}
+
 
 @app.post("/ask", response_model=AnswerResponse)
 def ask_question(payload: QuestionRequest):
