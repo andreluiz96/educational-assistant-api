@@ -1,15 +1,14 @@
 # ============================
-# Stage 1 - Build / Dependencies
+# Stage 1 - Dependências
 # ============================
 FROM python:3.12-slim AS builder
 
-# Evitar prompts interativos
 ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
 
-# Copia apenas o requirements primeiro (melhora cache de build)
+# Copia o requirements da raiz do projeto
 COPY requirements.txt .
 
 # Instala dependências em uma pasta isolada (/install)
@@ -25,14 +24,14 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Copia as dependências do stage builder
+# Copia as dependências instaladas no stage builder
 COPY --from=builder /install /usr/local
 
-# Copia o código da aplicação
+# Copia o código da aplicação (FastAPI)
+# (app/main.py está dentro de backend/app)
 COPY backend/app ./app
-COPY requirements.txt .
 
-# Expor a porta usada pelo Uvicorn
+# Porta usada pelo Uvicorn
 EXPOSE 8000
 
 # Comando padrão ao subir o container
