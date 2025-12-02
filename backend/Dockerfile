@@ -29,7 +29,7 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 
 # Copia o código da aplicação
-COPY app ./app
+COPY backend/app ./app
 COPY requirements.txt .
 
 # Expor a porta usada pelo Uvicorn
