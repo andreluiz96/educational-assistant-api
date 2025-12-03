@@ -11,6 +11,11 @@ __pycache__/
 venv/
 env/
 *.env
+backend/.env
+backend/.env.docker
+*.env
+.env
+
 
 # ==========================
 # Logs

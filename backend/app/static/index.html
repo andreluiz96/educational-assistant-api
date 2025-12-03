@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assistente Educacional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>Assistente Educacional</h1>
+      <p>Converse com o seu tutor de computação em tempo real.</p>
+    </header>
+
+    <main class="main">
+      <section class="form-card">
+        <div class="field">
+          <label for="studentId">ID do aluno</label>
+          <input id="studentId" type="text" placeholder="Ex: andre123" />
+        </div>
+
+        <div class="field">
+          <label for="question">Pergunta</label>
+          <textarea id="question" rows="4" placeholder="Digite sua dúvida aqui..."></textarea>
+        </div>
+
+        <button id="askButton">Perguntar</button>
+
+        <p id="status" class="status"></p>
+      </section>
+
+      <section class="chat-card">
+        <h2>Histórico</h2>
+        <div id="messages" class="messages"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>API: /ask via ALB (AWS Fargate + Groq)</span>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

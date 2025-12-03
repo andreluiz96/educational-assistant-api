@@ -4,25 +4,62 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from groq import Groq
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 import os
+import json
+from pathlib import Path
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
+templates = Jinja2Templates(directory="app/templates")
+
+app = FastAPI(
+    title="Educational Assistant API",
+    version="2.0.0"
+)
+
+# Servir arquivos estáticos (se quiser futuramente)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+@app.get("/", response_class=HTMLResponse)
+def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # ========== Config ==========
-load_dotenv()  # carrega variáveis do .env (útil em desenvolvimento)
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-if not GROQ_API_KEY:
-    # Em produção (ECS), essa variável vem do ambiente da task
-    # Em dev, vem do arquivo .env
+load_dotenv()  # carrega variáveis do .env em dev
+
+raw_key = os.getenv("GROQ_API_KEY")
+if not raw_key:
     raise RuntimeError("GROQ_API_KEY não está configurada.")
 
+# Se em algum ambiente vier JSON, trata; se for texto simples, usa direto
+try:
+    maybe_json = json.loads(raw_key)
+    if isinstance(maybe_json, dict) and "GROQ_API_KEY" in maybe_json:
+        GROQ_API_KEY = maybe_json["GROQ_API_KEY"]
+    else:
+        GROQ_API_KEY = raw_key
+except json.JSONDecodeError:
+    GROQ_API_KEY = raw_key
+
 client = Groq(api_key=GROQ_API_KEY)
-MODEL_NAME = "llama-3.1-8b-instant"  # modelo leve para POC
+MODEL_NAME = "llama-3.1-8b-instant"
 
 app = FastAPI(
     title="Educational Assistant API",
     version="2.0.0",
     description="Backend de prova de conceito para assistente educacional usando Groq LLM.",
 )
+
+# montar arquivos estáticos (CSS/JS)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
 
 # ========== Models ==========
 
@@ -43,6 +80,15 @@ class HealthResponse(BaseModel):
 
 
 # ========== Rotas ==========
+
+@app.get("/", response_class=HTMLResponse)
+def frontend():
+    """
+    Entrega a página do assistente educacional.
+    """
+    index_path = STATIC_DIR / "index.html"
+    return index_path.read_text(encoding="utf-8")
+
 
 @app.get("/health", response_model=HealthResponse)
 def health_check():
@@ -86,7 +132,6 @@ def ask_question(payload: QuestionRequest):
         )
 
     except Exception as e:
-        # Aqui você ainda consegue ver o erro real nos logs
         print("ERRO AO CHAMAR LLM:", repr(e))
         raise HTTPException(
             status_code=500, detail="Erro ao processar pergunta."

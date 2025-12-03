@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Assistente Educacional</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 40px;
+        }
+        #box {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+
+<div id="box">
+    <h2>Assistente Educacional 🤖📚</h2>
+
+    <textarea id="question" placeholder="Digite sua pergunta..."></textarea>
+
+    <button onclick="ask()">Enviar</button>
+
+    <div id="response"></div>
+</div>
+
+<script>
+async function ask() {
+    const question = document.getElementById("question").value;
+
+    const response = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            student_id: "web-user",
+            question: question
+        })
+    });
+
+    const data = await response.json();
+    document.getElementById("response").innerText = data.answer || data.detail;
+}
+</script>
+
+</body>
+</html>
